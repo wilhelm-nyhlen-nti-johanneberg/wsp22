@@ -1,0 +1,11 @@
+:root {
+    --magic-number:2vw;
+  }
+  
+  body {
+    background-color: aquamarine;
+  }
+
+  a {
+    margin: 10px;
+  }
