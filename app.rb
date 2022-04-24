@@ -15,11 +15,11 @@ def connect_database(path)
   return db
 end
 
-get("/users/new") do
-  slim(:"users/new")
+get("/views/register") do
+  slim(:"views/register")
 end
 
-post("/users/new") do 
+post("/views/register") do 
   username = params[:username]
   password = params[:password]
   password_confirm = params[:password_confirm]
