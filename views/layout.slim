@@ -12,8 +12,13 @@ html lang="en"
 
     nav
       a href="/" Home
-      a href="/views/posts" Posts
-      a href="/views/user" User
-      a href="/views/register" Registrera
+      a href="/posts/posts_index" Posts
+      a href="/users/show_user" User
+      -if session[:loggedin] == true 
+        a href="/posts/new" New Post
+
+      -elsif session[:loggedin] == false 
+        a href="/users/register" Sign Up
+        a href="/users/login" Login
     ==yield
   

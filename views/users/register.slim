@@ -1,0 +1,18 @@
+form action="users/register" method="post" 
+    input type="text" name="username" placeholder="Enter username"
+    input type="text" name="email" placeholder="Enter email"
+    input type="password" name="password" placeholder="Enter password"
+    input type="password" name="password_confirm" placeholder="Enter password again!"
+    input type="submit" value="Register new user"/
+
+
+-if session[:loggedin] != true 
+    -if session[:password_matcherrror] == true
+        h2 Passwords did not match. Please try again.
+        -session[:password_matcherrror] = false    #så att felmeddelanderna inte är kvar när användaren försöker registera igen
+    -if session[:failedloggin] == true
+        h2 Something went wrong, please try again.
+        -session[:failedloggin] = false    #så att felmeddelanderna inte är kvar när användaren försöker registera igen
+
+-if session[:successreg] == true
+    h2 You are now registered! Try to logging in.

@@ -1,0 +1,19 @@
+-if session[:loggedin] == true
+    h1 Welcome! This is your user page #{session[:username]}
+
+    form action="/action_page.php"
+    textarea name="message" rows="10" cols="30">Type user description here.
+    input type="submit"
+
+    a href="/user_logout" Press to logout
+
+
+-elsif session[:loggedin] == false 
+    h1 Welcome to the userpage. You are not currently logged in, try logging in via the menu above.
+
+
+
+
+
+
+
