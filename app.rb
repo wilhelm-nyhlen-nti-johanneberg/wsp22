@@ -88,14 +88,13 @@ end
     post_title = params[:post_title]
     post_category = params[:post_category]
     post_text = params[:post_text]
+    username = session[:username]
 
     db = connect_database("db/wspdatabase.db")
-    db.results_as_hash = true
-    db.execute("INSERT INTO Post (title, text,) VALUES (?,?)", post_title, post_text)
+    user_id = db.execute("SELECT id FROM User WHERE username = ?",username).first
+    db.execute("INSERT INTO Category (name) VALUES (?)", post_category)
+    db.execute("INSERT INTO Post (title, description, user_id, category_id) VALUES (?,?,?,?)", post_title, post_text,user_id,0)
     redirect("/")
-
-
-
   end
 
 
@@ -106,9 +105,22 @@ end
   end
 
 
-
   get("/users/show_user") do
     slim(:"users/show_user")
+  end
+
+  get('/posts/index') do
+    slim(:"posts/index")
+  end
+
+
+  post('/posts/index') do
+    db = connect_database("db/wspdatabase.db")
+    db.results_as_hash = true
+    posts_data = db.execute("SELECT * FROM Post").first
+
+    slim(:"posts/index",locals:{posts:posts_data})
+
   end
 
 
