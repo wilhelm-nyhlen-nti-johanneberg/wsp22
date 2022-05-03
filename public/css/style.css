@@ -56,3 +56,9 @@ a, form {
   display:inline-block;
   margin:10px;
 }
+
+.label {
+  color: rgb(44, 56, 77);
+  padding: 8px;
+}
+

@@ -1,9 +1,17 @@
 h2 Enter new post:
 
-form action="new" method="post" 
+form action="new" method ="post"
     input type="text" name="post_title" placeholder="Title"
-    input type="text" name="post_category" placeholder="Category"
     input type="text" name="post_text" placeholder="Text"
-    input type="submit" value="send post!"
+    label for="category" class="label" Pick a category:
+    select name="post_category" id="post_category"
+        option value="0" Band related
+        option value="1" Equipment related
+        option value="2" Music discussion
+        option value="3" Conserts
+        option value="4" Society
+        option value="5" Other
+        input type="submit" value="Submit"
+
     
    

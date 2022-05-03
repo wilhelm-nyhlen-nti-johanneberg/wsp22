@@ -28,13 +28,14 @@ post("/users/users/register") do
   email = params[:email]
   password_confirm = params[:password_confirm]
 
-  if password != password_confirm
-    session[:password_matcherrror] = true
-  end
-
-  if username == "" or password == "" or email == ""
+  if (username == "" || password == "" || email == "")
     session[:failedreg] = true
     redirect("/users/register")
+  
+  elsif (password != password_confirm)
+    session[:password_matcherrror] = true
+    redirect("/users/register")
+
   else 
     session[:userkey] = username
     session[:passkey] = password
@@ -44,7 +45,8 @@ post("/users/users/register") do
     password_digest = BCrypt::Password.create(password)
     db = connect_database("db/wspdatabase.db")
     db.execute("INSERT INTO User (username, password,role_id,email) VALUES (?,?,?,?)", username, password_digest,0,email)
-    redirect("/")
+    session[:sucessreg] = true
+    redirect("/users/register")
   end
 end
 
@@ -56,7 +58,6 @@ end
     username = params[:username]
     password = params[:password]
     db = connect_database("db/wspdatabase.db")
-    db.results_as_hash = true
 
     result = db.execute("SELECT * FROM User WHERE username = ?",username).first
     if result != nil
@@ -86,14 +87,13 @@ end
 
   post ('/posts/new') do
     post_title = params[:post_title]
-    post_category = params[:post_category]
+    category_id = params[:post_category]
     post_text = params[:post_text]
     username = session[:username]
 
     db = connect_database("db/wspdatabase.db")
     user_id = db.execute("SELECT id FROM User WHERE username = ?",username).first
-    db.execute("INSERT INTO Category (name) VALUES (?)", post_category)
-    db.execute("INSERT INTO Post (title, description, user_id, category_id) VALUES (?,?,?,?)", post_title, post_text,user_id,0)
+    db.execute("INSERT INTO Post (title, description, user_id, category_id) VALUES (?,?,?,?)", post_title, post_text,user_id,category_id)
     redirect("/")
   end
 
@@ -116,7 +116,6 @@ end
 
   post('/posts/index') do
     db = connect_database("db/wspdatabase.db")
-    db.results_as_hash = true
     posts_data = db.execute("SELECT * FROM Post").first
 
     slim(:"posts/index",locals:{posts:posts_data})
