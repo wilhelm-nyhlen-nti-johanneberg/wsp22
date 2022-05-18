@@ -1,4 +1,4 @@
-h3 Make sure to fill in all the empty boxes when signing up. Passwords has to match:
+h3 Make sure to fill in all the empty boxes when signing up. Passwords has to match!
 
 form action="users/register" method="post" 
     input type="text" name="username" placeholder="Enter username"
@@ -14,7 +14,11 @@ form action="users/register" method="post"
     -elsif session[:failedreg] == true 
         h2 Something went wrong, please try again.
         -session[:failedreg] = false    #så att felmeddelanderna inte är kvar när användaren försöker registera igen
+    -if session[:username_taken] == true 
+        h2 Sorry that username has been taken, please enter a different username.
+        -session[:username_taken] = false
+
 
 -if session[:sucessreg] == true
-    h2 Your sign up was succesfull! Try logging in. 
+    h2 Your sign up was successful! Try logging in. 
     -session[:sucessreg] = false

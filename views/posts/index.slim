@@ -1,8 +1,8 @@
 h1 All Posts:
 
 ol
-  - posts.each do |post|
+  - (posts.reverse).each do |post| 
     li 
-      h2 = post["username"] + " - " + post["title"]
+      h2 = post["username"] + ": " + post["title"] 
       article
-        p = post["description"]
+        p = "text: " + post["post_text"]

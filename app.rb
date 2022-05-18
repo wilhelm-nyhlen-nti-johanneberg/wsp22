@@ -7,6 +7,8 @@ require 'sinatra/reloader'
 
 enable :sessions
 
+#include Model
+
 def connect_database(path)
   db = SQLite3::Database.new(path)
   db.results_as_hash = true
@@ -16,8 +18,8 @@ end
 
 get('/')  do
   db = connect_database("db/wspdatabase.db")
-    posts_data = db.execute("SELECT * FROM Post")
-    slim(:"start",locals:{posts:posts_data})
+  posts_data = db.execute("SELECT * FROM Post")
+  slim(:"start",locals:{posts:posts_data})
 end 
 
 
@@ -50,9 +52,17 @@ post("/users/users/register") do
 
     password_digest = BCrypt::Password.create(password)
     db = connect_database("db/wspdatabase.db")
-    db.execute("INSERT INTO User (username, password,role_id,email) VALUES (?,?,?,?)", username, password_digest,0,email)
-    session[:sucessreg] = true
+    username_check = db.execute("SELECT 1 FROM User WHERE username = ?;",username).first
+    
+    if (username_check == nil)
+      db.execute("INSERT INTO User (username, password,role_id,email) VALUES (?,?,?,?)", username, password_digest,0,email)
+      session[:sucessreg] = true
+    elsif 
+      session[:username_taken] = true
+    end
+    
     redirect("/users/register")
+      
   end
 end
 
@@ -97,11 +107,9 @@ end
     post_text = params[:post_text]
     username = session[:username]
 
-    p username
-
     db = connect_database("db/wspdatabase.db")
     user_id = db.execute("SELECT id FROM User WHERE username = ?",username).first["id"]
-    db.execute("INSERT INTO Post (title,description,user_id,category_id) VALUES (?,?,?,?)", post_title,post_text,user_id,category_id)
+    db.execute("INSERT INTO Post (title,post_text,user_id,category_id) VALUES (?,?,?,?)", post_title,post_text,user_id,category_id)
     redirect("/posts/new")
   end
 
@@ -114,18 +122,48 @@ end
 
 
   get("/users/show_user") do
-    slim(:"users/show_user")
+    if session[:loggedin] == true
+      username = session[:username]
+      db = connect_database("db/wspdatabase.db")
+      user_desc = db.execute("SELECT description FROM User WHERE username = ?",username).first["description"]
+      user_id = db.execute("SELECT id FROM USER WHERE username = ?", username).first["id"]
+      user_posts = db.execute("SELECT * FROM Post WHERE user_id = ?",user_id)
+      slim(:"users/show_user", locals:{user_desc:user_desc,user_posts:user_posts})
+    else
+      slim(:"users/show_user", locals:{user_desc:user_desc})
+    end 
   end
+
+  post("/users/show_user") do
+    newuser_desc = params[:newuser_desc]
+    username = session[:username]
+    db = connect_database("db/wspdatabase.db")
+    db.execute("UPDATE User SET description = ? WHERE username = ?;)", newuser_desc, username)
+    redirect('/users/show_user')
+  end
+
+
+
+  post("/post/:id/delete") do
+    post_id = params[:id]
+    username = session[:username]
+    db = connect_database("db/wspdatabase.db")
+    db.execute("DELETE FROM Post WHERE id = ?", post_id)
+    redirect('/users/show_user')
+
+  end
+
+
+
 
   get('/posts/index') do
     db = connect_database("db/wspdatabase.db")
-    posts_data = db.execute("SELECT * FROM Post INNER JOIN User ON Post.user_id == User.id")
-    p posts_data
-
+    posts_data = db.execute("SELECT * FROM Post INNER JOIN User ON Post.user_id = User.id") 
     slim(:"posts/index",locals:{posts:posts_data})
   end
 
 
+  /post/#{el["id"]}/delete
 
 
 

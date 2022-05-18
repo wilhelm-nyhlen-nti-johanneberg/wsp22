@@ -1,16 +1,38 @@
 -if session[:loggedin] == true
     h1 Welcome! This is your user page #{session[:username]}
+    -if user_desc == nil 
+        h3 User description: No user description has been added!
+    -else
+        h3 User description: #{user_desc}
+      
 
-    form action="/action_page.php"
-    textarea name="message" rows="10" cols="30">Type user description here.
-    input type="submit"
+    form action="show_user" method="post" 
+        textarea name="newuser_desc" rows="6" cols="70">Type new user description here.
+        input type="submit"
 
--elsif session[:loggedin] == false 
+    h2 Posts by: #{session[:username]}
+    -if user_posts == []
+        p No posts by #{session[:username]}
+    -else
+        ol
+            -(user_posts.reverse).each do |post|
+                li 
+                    h3 = post["title"] 
+                    article
+                        p = "text: " + post["post_text"]
+                    form action="/post/#{post["id"]}/delete" method="post" 
+                        button type="submit" value="delete_post"Delete Post
+
+
+
+        
+    a href="/user_logout" Press to logout
+
+-else 
     h1 Welcome to the userpage. You are not currently logged in, try logging in via the menu above.
+    a href="/user_logout" Press to logout
 
 
-
-a href="/user_logout" Press to logout
 
 
 
